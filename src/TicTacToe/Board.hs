@@ -1,7 +1,7 @@
 module TicTacToe.Board where
 
 import qualified Data.Map as M
-import Data.Maybe (catMaybes)
+import Data.Maybe (mapMaybe)
 import Data.List (find, intercalate)
 
 data Position = NW | N | NE | W | O | E | SW | S | SE deriving (Ord, Eq, Show, Enum)
@@ -69,10 +69,8 @@ scoringLanes = [[N, O, S], [NE, E, SE],
 
 findWinner :: Board -> Maybe Player
 findWinner (Board _ m) =
-  let lanes_of_maybes = map (\lane ->
-                              map (\e -> M.lookup e m) lane
-                            ) scoringLanes
-      complete_lanes = catMaybes $ map sequence lanes_of_maybes
+  let lanes_of_maybes = map (map (`M.lookup` m)) scoringLanes
+      complete_lanes = mapMaybe sequence lanes_of_maybes
   in find (\(h:r) -> all (h==) r) complete_lanes >>= \(f:_) -> return f
 
 instance Show EmptyBoard where

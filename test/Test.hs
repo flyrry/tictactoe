@@ -26,16 +26,6 @@ quick = Args {
           chatty = True
         }
 
-
-
-
-
-
-
-
-
-
-
 instance Arbitrary Position where
   arbitrary = elements [NW .. SE]
 
@@ -44,14 +34,13 @@ instance Arbitrary Board where
 
 testBoard = forAll arbitrary $ \board@(Board _ m) ->
               forAll arbitrary $ \pos ->
-                if M.member pos m then True
-                else (takeBack (move board pos)) == board
+                M.member pos m || takeBack (move board pos) == board
 
 runTests :: [String] -> IO ()
 runTests as =
   let runTestsAs args = quickCheckWithResult args testBoard >>= \res ->
                         case res of
-                        Success {..} -> putStrLn "Success!" >> return ()
+                        Success {..} -> putStrLn "Success!"
                         _ -> exitFailure
   in case as of
       ("-e":_) -> putStrLn "running extensive tests" >> runTestsAs extensive

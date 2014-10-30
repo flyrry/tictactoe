@@ -6,13 +6,13 @@ main :: IO ()
 main = do
   hSetBuffering stdin NoBuffering
   hSetBuffering stdout NoBuffering
-  putStrLn $ show EmptyBoard
+  print EmptyBoard
   p <- readMove
   mainLoop $ move EmptyBoard p
 
 mainLoop :: MoveResult -> IO ()
 mainLoop board = do
-  putStrLn $ show board
+  print board
   case board of
     IllegalMove -> error "Illegal move, position was taken!"
     NextMove newboard -> do
@@ -22,7 +22,7 @@ mainLoop board = do
       putStr "GameOver! "
       case whoWon fb of
         Nothing -> putStrLn "It's a draw."
-        Just player -> putStrLn $ (show player) ++ " won!"
+        Just player -> print $ show player ++ " won!"
 
 readMove :: IO Position
 readMove = do
