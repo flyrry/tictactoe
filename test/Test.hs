@@ -4,7 +4,7 @@ import System.Environment(getArgs)
 import Test.QuickCheck
 
 import qualified Data.Map as M
-import TicTacToe
+import TicTacToe.Board
 
 -- do extensive tests
 extensive :: Args
@@ -30,11 +30,12 @@ instance Arbitrary Position where
   arbitrary = elements [NW .. SE]
 
 instance Arbitrary Board where
-  arbitrary = listOf arbitrary >>= \poss -> return (Board [] (foldl (\m p -> M.insert p PlayerX m) M.empty poss))
+  arbitrary = listOf arbitrary >>= \poss -> return (Board [(PlayerX,O)] (foldl (\m p -> M.insert p PlayerX m) M.empty poss))
 
 testBoard = forAll arbitrary $ \board@(Board _ m) ->
               forAll arbitrary $ \pos ->
-                M.member pos m || takeBack (move board pos) == board
+                if M.member pos m then True
+                else takeBack (move board pos) == board
 
 runTests :: [String] -> IO ()
 runTests as =
